@@ -1,0 +1,12 @@
+image: php:7.4
+
+pipelines:
+  default:
+    - step:
+        name: Deploy to Test
+        deployment: test
+        script:
+          - apt-get update && apt-get install -y lftp # Instala lftp
+          - lftp -c "set ftp:ssl-allow no; 
+              open ftp://$FTP_USERNAME:$FTP_PASSWORD@$FTP_SERVER;
+              mirror --reverse --delete --verbose --only-newer ./ /ruta/remota;"
