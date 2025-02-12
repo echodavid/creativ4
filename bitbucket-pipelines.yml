@@ -6,30 +6,11 @@ pipelines:
         name: Deploy to Test
         deployment: test
         caches:
-          - rsync-cache # Nombre válido del caché
+          - rsync-cache
         script:
-          # Instalación de curlftpfs y rsync solo si no están en caché
-          - apt-get update && apt-get install -y curlftpfs rsync # Instala curlftpfs y rsync
-          - mkdir -p /mnt/ftp
-          - curlftpfs ftp://$FTP_USERNAME:$FTP_PASSWORD@$FTP_SERVER /mnt/ftp
-          - rsync -avz --delete --checksum ./public_html/ /mnt/ftp/public_html
-          - fusermount -u /mnt/ftp
-
-  # branches:
-  #   main:
-  #     - step:
-  #         name: Deploy to Test
-  #         deployment: test
-  #         caches:
-  #           - rsync-cache # Nombre válido del caché
-  #         script:
-  #           # Instalación de curlftpfs y rsync solo si no están en caché
-  #           - apt-get update && apt-get install -y curlftpfs rsync # Instala curlftpfs y rsync
-  #           - mkdir -p /mnt/ftp
-  #           - curlftpfs ftp://$FTP_USERNAME:$FTP_PASSWORD@$FTP_SERVER /mnt/ftp
-  #           - rsync -avz --delete --checksum ./public_html/ /mnt/ftp/public_html
-  #           - fusermount -u /mnt/ftp
+          - apt-get update && apt-get install -y rsync  # Install rsync
+          - rsync -avz --delete --checksum ./public_html/ $FTP_USERNAME@$FTP_SERVER:/ruta/remota/
 
 definitions:
   caches:
-    rsync-cache: /var/cache/apt/archives # Usamos el directorio de caché de apt
+    rsync-cache: /var/cache/apt/archives
