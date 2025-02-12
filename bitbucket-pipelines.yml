@@ -6,11 +6,14 @@ pipelines:
         name: Deploy to Test
         deployment: test
         caches:
-          - rsync-cache
+          - lftp-cache # Nombre válido del caché
         script:
-          - apt-get update && apt-get install -y rsync  # Install rsync
-          - rsync -avz --delete --checksum ./public_html/ $FTP_USERNAME@$FTP_SERVER:/public_html/
+          # Instalación de lftp solo si no está en caché
+          - apt-get update && apt-get install -y lftp # Instala lftp
+          - lftp -c "set ftp:ssl-allow no; 
+              open ftp://$FTP_USERNAME:$FTP_PASSWORD@$FTP_SERVER;
+              mirror --reverse --delete --verbose --only-newer --ignore-time --use-cache ./public_html /public_html;"
 
 definitions:
   caches:
-    rsync-cache: /var/cache/apt/archives
+    lftp-cache: /var/cache/apt/archives # Usamos el directorio de caché de apt
