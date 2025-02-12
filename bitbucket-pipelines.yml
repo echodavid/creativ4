@@ -12,7 +12,7 @@ pipelines:
           - apt-get update && apt-get install -y lftp # Instala lftp
           - lftp -c "set ftp:ssl-allow no;
             open ftp://$FTP_USERNAME:$FTP_PASSWORD@$FTP_SERVER;
-            mirror --reverse --delete --verbose --only-newer ./public_html /public_html;"
+            mirror --reverse --delete --verbose --only-newer --use-cache ./public_html /public_html;"
 
   # branches:
   #   main:
