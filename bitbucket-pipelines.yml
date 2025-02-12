@@ -3,16 +3,23 @@ image: php:7.4
 pipelines:
   default:
     - step:
-        name: Deploy to Test
-        deployment: test
-        caches:
-          - lftp-cache # Nombre válido del caché
+        name: Default Step
         script:
-          # Instalación de lftp solo si no está en caché
-          - apt-get update && apt-get install -y lftp # Instala lftp
-          - lftp -c "set ftp:ssl-allow no; 
-              open ftp://$FTP_USERNAME:$FTP_PASSWORD@$FTP_SERVER;
-              mirror --reverse --delete --verbose --only-newer --ignore-time --use-cache ./public_html /public_html;"
+          - echo "This is the default pipeline for testing."
+
+  branches:
+    main:
+      - step:
+          name: Deploy to Test
+          deployment: test
+          caches:
+            - lftp-cache # Nombre válido del caché
+          script:
+            # Instalación de lftp solo si no está en caché
+            - apt-get update && apt-get install -y lftp # Instala lftp
+            - lftp -c "set ftp:ssl-allow no; 
+                open ftp://$FTP_USERNAME:$FTP_PASSWORD@$FTP_SERVER;
+                mirror --reverse --delete --verbose --only-newer --ignore-time --use-cache ./public_html /public_html;"
 
 definitions:
   caches:
