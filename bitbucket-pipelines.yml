@@ -10,9 +10,23 @@ pipelines:
         script:
           # Instalación de lftp solo si no está en caché
           - apt-get update && apt-get install -y lftp # Instala lftp
-          - lftp -c "set ftp:ssl-allow no; 
-              open ftp://$FTP_USERNAME:$FTP_PASSWORD@$FTP_SERVER;
-              mirror --reverse --delete --verbose --only-newer ./public_html /public_html;"
+          - lftp -c "set ftp:ssl-allow no;
+            open ftp://$FTP_USERNAME:$FTP_PASSWORD@$FTP_SERVER;
+            mirror --reverse --delete --verbose --only-newer ./public_html /public_html;"
+
+  # branches:
+  #   main:
+  # - step:
+  #     name: Deploy to Test
+  #     deployment: test
+  #     caches:
+  #       - lftp-cache # Nombre válido del caché
+  #     script:
+  #       # Instalación de lftp solo si no está en caché
+  #       - apt-get update && apt-get install -y lftp # Instala lftp
+  #       - lftp -c "set ftp:ssl-allow no;
+  #           open ftp://$FTP_USERNAME:$FTP_PASSWORD@$FTP_SERVER;
+  #           mirror --reverse --delete --verbose --only-newer ./public_html /public_html;"
 
 definitions:
   caches:
