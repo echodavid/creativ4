@@ -9,7 +9,7 @@ pipelines:
           - rsync-cache
         script:
           - apt-get update && apt-get install -y rsync  # Install rsync
-          - rsync -avz --delete --checksum ./public_html/ $FTP_USERNAME@$FTP_SERVER:/ruta/remota/
+          - rsync -avz --delete --checksum ./public_html/ $FTP_USERNAME@$FTP_SERVER:/public_html/
 
 definitions:
   caches:
