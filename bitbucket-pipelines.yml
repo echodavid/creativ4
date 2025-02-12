@@ -6,28 +6,30 @@ pipelines:
         name: Deploy to Test
         deployment: test
         caches:
-          - lftp-cache # Nombre válido del caché
+          - rsync-cache # Nombre válido del caché
         script:
-          # Instalación de lftp solo si no está en caché
-          - apt-get update && apt-get install -y lftp # Instala lftp
-          - lftp -c "set ftp:ssl-allow no;
-            open ftp://$FTP_USERNAME:$FTP_PASSWORD@$FTP_SERVER;
-            mirror --reverse --delete --verbose --only-newer --use-cache --checksum ./public_html /public_html;"
+          # Instalación de curlftpfs y rsync solo si no están en caché
+          - apt-get update && apt-get install -y curlftpfs rsync # Instala curlftpfs y rsync
+          - mkdir -p /mnt/ftp
+          - curlftpfs ftp://$FTP_USERNAME:$FTP_PASSWORD@$FTP_SERVER /mnt/ftp
+          - rsync -avz --delete --checksum ./public_html/ /mnt/ftp/public_html
+          - fusermount -u /mnt/ftp
 
   # branches:
   #   main:
-  # - step:
-  #     name: Deploy to Test
-  #     deployment: test
-  #     caches:
-  #       - lftp-cache # Nombre válido del caché
-  #     script:
-  #       # Instalación de lftp solo si no está en caché
-  #       - apt-get update && apt-get install -y lftp # Instala lftp
-  #       - lftp -c "set ftp:ssl-allow no;
-  #           open ftp://$FTP_USERNAME:$FTP_PASSWORD@$FTP_SERVER;
-  #           mirror --reverse --delete --verbose --only-newer ./public_html /public_html;"
+  #     - step:
+  #         name: Deploy to Test
+  #         deployment: test
+  #         caches:
+  #           - rsync-cache # Nombre válido del caché
+  #         script:
+  #           # Instalación de curlftpfs y rsync solo si no están en caché
+  #           - apt-get update && apt-get install -y curlftpfs rsync # Instala curlftpfs y rsync
+  #           - mkdir -p /mnt/ftp
+  #           - curlftpfs ftp://$FTP_USERNAME:$FTP_PASSWORD@$FTP_SERVER /mnt/ftp
+  #           - rsync -avz --delete --checksum ./public_html/ /mnt/ftp/public_html
+  #           - fusermount -u /mnt/ftp
 
 definitions:
   caches:
-    lftp-cache: /var/cache/apt/archives # Usamos el directorio de caché de apt
+    rsync-cache: /var/cache/apt/archives # Usamos el directorio de caché de apt
